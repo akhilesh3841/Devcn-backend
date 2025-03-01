@@ -12,7 +12,7 @@ export const UserReq=async(req,res)=>{
         }).populate("fromUserId",["firstName", "lastName","age","skills","about","photoUrl"]);
         //refernce datbase se dta fetch karta hai
         res.status(200).json({
-            pendingReq,
+            data:pendingReq,
         })        
     } catch (error) {
         res.status(500).json({
@@ -36,8 +36,8 @@ export const UserConnection = async (req, res) => {
                 { fromUserId: loggedInUser._id, status: "accepted" }
             ]
         })
-        .populate("fromUserId", "firstName lastName about skills photoUrl")
-        .populate("toUserId", "firstName lastName about skills photoUrl");
+        .populate("fromUserId", "firstName lastName about skills photoUrl age")
+        .populate("toUserId", "firstName lastName about skills photoUrl age");
 
         const data = connectionreq.map((row) => 
             row.fromUserId._id.toString() === loggedInUser._id.toString()
@@ -90,12 +90,12 @@ export const feed=async(req,res)=>{
                 { _id: { $ne: loggedInUser._id } }
             ]
         }
-        ).select("firstName lastName photoUrl about skills").skip(skip).limit(limit)
+        ).select("firstName lastName photoUrl about skills age gender ").skip(skip).limit(limit)
 
         
 
         res.status(200).json({
-            users,
+            data:users,
         })
 
 

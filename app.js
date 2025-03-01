@@ -5,12 +5,18 @@ import registerrouter from "./routes/user.js"
 import statusrouter from "./routes/request.js";
 import Userreqrouter from "./routes/Userdata.js"
 
+import cors from "cors"; // Import cors
+
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
 
 
 
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:5173', // Frontend ka URL
+    credentials: true,  // Allow cookies to be sent with requests
+}));
 app.use(express.json());
 app.use(cookieParser());
 

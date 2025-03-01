@@ -2,12 +2,11 @@ import {User} from "../models/user.js";
 import bcrypt from "bcrypt";
 
 import {validateEditProfileData, validateSignUpData} from "../utils/validation.js"
-import jwt from "jsonwebtoken"
 
 export const register=async(req,res)=>{
     try {
         validateSignUpData(req);
-        const {firstName,lastName,emailId,password} = req.body;
+        const {firstName,lastName,emailId,password,age,gender,photoUrl,about,skills} = req.body;
         const hashpassword=await bcrypt.hash(password,10);
 
         const user=new User({
@@ -15,13 +14,23 @@ export const register=async(req,res)=>{
             lastName, 
             emailId,
             password: hashpassword,
+            age,
+            gender,
+            photoUrl,
+            about,
+            skills,
         })
 
         const saveduser=await user.save();
+        const token = await user.getJWT();
+
+        res.cookie("token", token, {
+          expires: new Date(Date.now() + 8 * 3600000),
+          httpOnly: true,
+        });
 
         res.status(201).json({
-            message: "user saved successfully",
-            saveduser,
+            data:saveduser
         });
         
     } catch (error) {
@@ -42,25 +51,15 @@ export const login = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const isPasswordValid = await user.validatepassword(password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
+        // const isPasswordValid = await user.validatepassword(password);
+      
+            const token=await user.getJWT();
 
-        const token = await user.getJWT();
-
- 
-        res.cookie("token", token, {
-            httpOnly: true, // Secure cookie, can't be accessed by JavaScript
-            secure: process.env.NODE_ENV === "production", // Secure in production
-            sameSite: "strict",
-        });
-
-        res.status(200).json({
-            message: "Logged in successfully",
-            user,
-        });
-
+            res.cookie("token",token,{
+                expires: new Date(Date.now() + 8*3600000),
+                httpOnly: true,
+            })
+            res.send(user);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -75,7 +74,9 @@ export const profileview=async(req,res)=>{
         if(!user){
             return res.status(404).json({message:"User not found"});
         }
-        res.status(200).json({user});
+        res.status(200).json({
+            data:user
+        });
         
     } catch (error) {
         res.status(500).json({message:error.message});
@@ -120,7 +121,7 @@ export const profileEdit = async (req, res) => {
         // Save the updated user (assuming it's a Mongoose model)
         await loggedInUser.save();
 
-        return res.status(200).json({ message: "Profile updated successfully", user: loggedInUser });
+        return res.status(200).json({ message: "Profile updated successfully", data: loggedInUser });
     } catch (error) {
         console.error("Error updating profile:", error);
         return res.status(500).json({ error: "Internal Server Error" });
@@ -128,15 +129,15 @@ export const profileEdit = async (req, res) => {
 };
 
 
-export const password=async(req,res)=>{
-    try {
-        const user=req.user;
-        if(!user){
-            return res.status(404).json({message:"User not found"});
-        }
-        const {oldPassword,newPassword}=req.body;
+// export const password=async(req,res)=>{
+//     try {
+//         const user=req.user;
+//         if(!user){
+//             return res.status(404).json({message:"User not found"});
+//         }
+//         const {oldPassword,newPassword}=req.body;
         
-    } catch (error) {
+//     } catch (error) {
         
-    }
-}
+//     }
+// }

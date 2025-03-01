@@ -8,9 +8,9 @@ export const validateSignUpData = (req) => {
     if (!emailId || !validator.isEmail(emailId)) {
         throw new Error("Invalid email address");
     }
-    if (!validator.isStrongPassword(password)) {
-        throw new Error("Please enter a strong password");
-    }
+    // if (!validator.isStrongPassword(password)) {
+    //     throw new Error("Please enter a strong password");
+    // }
     return true;
 };
 

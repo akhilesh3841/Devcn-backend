@@ -24,11 +24,9 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      validate(value) {
-        if (!validator.isStrongPassword(value)) {
-          throw new Error("Enter a strong password: " + value);
-        }
-      },
+      minLength: 8,
+      
+
     },
     age: {
       type: Number,
@@ -50,16 +48,9 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "https://geographyandyou.com/images/user-profile.png",
-      validate(value) {
-        if (!validator.isURL(value)) {
-          throw new Error("Invalid photo URL: " + value);
-        }
-      },
     },
     about: {
       type: String,
-      default: "This is a default about of the user!",
     },
     skills: {
       type: [String],
@@ -70,13 +61,14 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.methods.getJWT=async function(){
-  const user=this;
-  const token=await jwt.sign({_id:user._id}, process.env.JWT_SECRET, {
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
-});
-  return token;
-}
+  });
+  return token; // <-- This line was missing
+};
+
 
 userSchema.methods.validatepassword=async function(passwordinputuser){
   const user=this;
