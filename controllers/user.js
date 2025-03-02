@@ -43,16 +43,21 @@ export const register=async(req,res)=>{
 
 
 export const login = async (req, res) => {
+    const {emailId, password} = req.body;
     try {
-        const { emailId, password } = req.body;
-
-        const user = await User.findOne({ emailId });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+        const user=await User.findOne({emailId});
+        if(!user){
+            return res.status(404).json({
+                message:"User not found"
+            })
+        };
+        const ismatch=await bcrypt.compare(password,user.password);
+        if(!ismatch){
+            return res.status(400).json({
+                message:"Invalid credentials"
+            });
         }
-
-        // const isPasswordValid = await user.validatepassword(password);
-      
+        if(ismatch){
             const token=await user.getJWT();
 
             res.cookie("token",token,{
@@ -60,8 +65,14 @@ export const login = async (req, res) => {
                 httpOnly: true,
             })
             res.send(user);
+        }
+        
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: "ERROR: " + error.message,
+        });
+        
     }
 };
 

@@ -8,9 +8,12 @@ export const validateSignUpData = (req) => {
     if (!emailId || !validator.isEmail(emailId)) {
         throw new Error("Invalid email address");
     }
-    // if (!validator.isStrongPassword(password)) {
-    //     throw new Error("Please enter a strong password");
-    // }
+
+    if (!password) {
+        throw new Error("Password is required.");
+    } else if (!validator.isStrongPassword(password)) {
+        throw new Error("Password must be strong and contain at least 8 characters, including uppercase, lowercase, numbers, and symbols.");
+    }
     return true;
 };
 
