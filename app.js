@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import registerrouter from "./routes/user.js"
 import statusrouter from "./routes/request.js";
 import Userreqrouter from "./routes/Userdata.js"
+import paymentrouter from "./routes/Payment.js"
 
 import cors from "cors"; // Import cors
 
@@ -30,6 +31,8 @@ app.use('/',registerrouter);
 app.use('/req', statusrouter);
 
 app.use("/userdata",Userreqrouter);
+
+app.use("/payment",paymentrouter);
 
 const PORT=process.env.PORT;
 app.listen(PORT, () => {
