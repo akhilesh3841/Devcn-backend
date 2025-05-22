@@ -26,6 +26,12 @@ app.use(cookieParser());
 
 connection();
 
+
+app.get('/', (req, res) => {
+    res.send('Backend is running successfully!');
+});
+
+
 app.use('/',registerrouter);
 
 app.use('/req', statusrouter);
