@@ -67,7 +67,7 @@ router.post("/api/webhook",async(req,res)=>{
 
 
 
-        const webhookSignature=req.get["X-Razorpay-Signature"]
+        const webhookSignature=req.get("X-Razorpay-Signature")
         
 
         const iswebhookvalid=validateWebhookSignature(JSON.stringify(req.body), webhookSignature,process.env.RAZORPAY_WEBHOOK)
