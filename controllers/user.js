@@ -166,7 +166,7 @@ export const forgetpassword=async(req,res)=>{
         await user.save();
 
         // 3. Send email (fake link for now)
-        const resetLink = `http://localhost:5173/reset-password/${resetToken}`; // replace with frontend link
+        const resetLink = `http://13.234.110.96/reset-password/${resetToken}`; // replace with frontend link
 
         // Use nodemailer (for production, use a real SMTP service)
         const transporter = nodemailer.createTransport({
