@@ -124,4 +124,21 @@ router.post("/webhook",async(req,res)=>{
 
 })
 
+router.get("/premiumverify",userauth,(req,res)=>{
+  const user=req.user.toJSON();
+
+  if(user.isPremium){
+    return res.json({
+      ...user
+    })
+  }
+  else{
+    return res.json({
+      ...user
+    })
+  }
+
+})
+
+
 export default router;
