@@ -61,16 +61,23 @@ res.status(200).json({
 router.post("/api/webhook",async(req,res)=>{
     try {
 
-        const webhookSignature=req.get("X-Razorpay-Signature")
-        
+       console.log("Webhook Called");
+     const webhookSignature = req.get("X-Razorpay-Signature");
+          console.log("Webhook Signature", webhookSignature);
 
-        const iswebhookvalid=validateWebhookSignature(JSON.stringify(req.body), webhookSignature,process.env.RAZORPAY_WEBHOOK)
+        const iswebhookvalid=validateWebhookSignature(
+          JSON.stringify(req.body), 
+          webhookSignature,
+          process.env.RAZORPAY_WEBHOOK
+        );
 
-        if(!webhookSignature){
-            return res.status(400).json({
-                msg:"webhook signature invalid"
-            })
-        }
+
+        if (!iswebhookvalid) {
+      console.log("INvalid Webhook Signature");
+      return res.status(400).json({ msg: "Webhook signature is invalid" });
+    }
+    console.log("Valid Webhook Signature");
+
 
         //update my payment sucess in db
 
@@ -79,13 +86,16 @@ router.post("/api/webhook",async(req,res)=>{
         const payment=await Payment.findOne({orderId:paymentDetails.order_id});
         payment.status=paymentDetails.status;
         await payment.save();
+           console.log("Payment saved");
 
 
         //update user premimum
         const user=await User.findOne({_id:payment.userId});
         user.isPremium=true
         user.membershipType=payment.notes.membershipType
+        console.log("User saved");
         await user.save();
+        
         //return sucess response
 
 
