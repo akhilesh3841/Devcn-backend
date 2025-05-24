@@ -5,8 +5,12 @@ import registerrouter from "./routes/user.js"
 import statusrouter from "./routes/request.js";
 import Userreqrouter from "./routes/Userdata.js"
 import paymentrouter from "./routes/Payment.js"
-
+import http from "http"
 import cors from "cors"; // Import cors
+import intializesocket from "./utils/socket.js"
+import chatrouter from "./routes/Chat.js"
+
+
 
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
@@ -40,7 +44,17 @@ app.use("/userdata",Userreqrouter);
 
 app.use("/payment",paymentrouter);
 
+
+app.use("/chat",chatrouter);
+
+
+//create a server for websocket
+const server=http.createServer(app)
+intializesocket(server);
+
+
+
 const PORT=process.env.PORT;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
